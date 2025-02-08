@@ -2,22 +2,39 @@
   https://github.com/Motya1742/ApiTest.git
 
   Установка и запуск
+  
 1. Клонировать репозиторий с GitHub:
+   
 git clone https://github.com/Motya1742/ApiTest.git
+
 2. Установить IntelliJ IDEA с официального сайта GetBrains.
+   
 3. Скачать и установить Maven с официального сайта. Добавить в переменные среды.
+   
 4. Открыть проект в IntelliJ IDEA:
+   
 Выбрать "Open" и указать путь к склонированному репозиторию.
+
 Дождаться загрузки зависимостей.
+
 5. Настроить и запустить каждый микросервис в следующей последовательности:
+   
 Убедитесь, что в настройках проекта выбран JDK 21.
+
 Запустить eurekaServer (порт 8761).
+
 Запустить authenticationService (порт 8083).
+
 Запустить bookStorageService (порт 8081).
+
 Запустить bookTrackerService (порт 8082).
+
 Запустить mainGateway (порт 8080).
+
 Ожидать развертывание всех сервисов.
+
 Проверить регистрацию сервисов на Eureka Server: http://localhost:8761
+
 6. Для тестирования API использовать Postman, приложенный к проекту или Swagger.
 
 Swagger UI для каждого сервиса:
@@ -28,7 +45,7 @@ bookTrackerService: http://localhost:8082/swagger-ui/index.html#/
 
 authenticationService: http://localhost:8083/swagger-ui/index.html#/
 
-8. Описание основных запросов API:
+7. Описание основных запросов API:
    
 7.1 bookStorageService
    
