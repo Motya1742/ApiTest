@@ -1,0 +1,99 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: library
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+  eurekaserver:
+    build:
+      context: ./eurekaServer
+    container_name: eurekaserver
+    ports:
+      - "8761:8761"
+    networks:
+      - mynetwork
+
+  apigateway:
+    build:
+      context: ./mainGateway
+    container_name: apigateway
+    depends_on:
+      - eurekaserver
+      - bookstorageservice
+      - booktrackerservice  
+      - authenticationservice
+    environment:
+      SPRING_APPLICATION_NAME: maingateway
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+
+  bookstorageservice:
+    build:
+      context: ./bookStorageService
+    container_name: bookstorageservice
+    depends_on:
+      - mysql-db
+      - eurekaserver
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/library
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+    ports:
+      - "8082:8082"
+    networks:
+      - mynetwork
+
+  booktrackerservice:
+    build:
+      context: ./bookTrackerService
+    container_name: booktrackerservice
+    depends_on:
+      - mysql-db
+      - eurekaserver
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/library
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+    ports:
+      - "8083:8083"
+    networks:
+      - mynetwork
+
+  authenticationservice:
+    build:
+      context: ./authenticationService
+    container_name: authenticationservice
+    depends_on:
+      - mysql-db
+      - eurekaserver
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/library
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+    ports:
+      - "8081:8081"
+    networks:
+      - mynetwork
+
+volumes:
+  mysql_data:
+
+networks:
+  mynetwork:
+    driver: bridge
